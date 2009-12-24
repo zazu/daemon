@@ -94,7 +94,7 @@ class Daemon {
 		{
 			$last_run = Kohana::cache($this->_cache_name($event));
 			
-			if (time() > ($last_run + $interval))
+			if ($last_run == NULL OR time() > ($last_run + $interval))
 			{
 				$this->_invoke_event($event);
 			}
@@ -112,7 +112,7 @@ class Daemon {
 	{
 		$event = is_object($event) ? $event->name : $event;
 		
-		$this->_invoke_event($this->_tasks[$event] = $interval);
+		$this->_tasks[$event] = $interval;
 		
 		return $this;
 	}
