@@ -96,7 +96,7 @@ class Daemon {
 			
 			if ($last_run == NULL OR time() > ($last_run + $interval))
 			{
-				$this->_invoke_event($event);
+				$this->_execute_event($event);
 			}
 		}
 	}
@@ -124,9 +124,9 @@ class Daemon {
 	 * @param	string	The name of the event to invoke.
 	 * @return	void
 	 */
-	protected function _invoke_event($event)
+	protected function _execute_event($event)
 	{
-		Event::instance($event)->invoke();
+		Event::instance($event)->execute();
 		
 		if ( ! Kohana::cache($this->_cache_name($event), time(), time() * 2))
 		{
