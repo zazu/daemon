@@ -28,32 +28,19 @@ class Daemon {
 	}
 	
 	/**
-	 * Retrieves an existing instance of a daemon and created a it if it doesnt exist.
+	 * Retrieves an existing instance of a daemon and createsit if it doesnt exist.
 	 * 
 	 * @param	string	The unique name of the daemon.
 	 * @return	Daemon
 	 */
 	public static function instance($name = 'default')
 	{
-		if (isset(self::$_instances[$name]))
+		if ( ! isset(self::$_instances[$name]))
 		{
-			return self::$_instances[$name];
+			self::$_instances[$name] = new self($name);
 		}
-		else
-		{
-			return self::factory($name);
-		}
-	}
-	
-	/**
-	 * Creates a new instance of a daemon, overwriting any existing instances with the same name.
-	 * 
-	 * @param	string	The unique name of the daemon.
-	 * @return	Daemon
-	 */
-	public static function factory($name = 'default')
-	{
-		return self::$_instances[$name] = new self($name);
+		
+		return self::$_instances[$name];
 	}
 	
 	/**
@@ -118,7 +105,7 @@ class Daemon {
 	}
 	
 	/**
-	 * Invokes the event, updating the event cache to the time of invoke.
+	 * Executes the event, updating the event cache to the time of invoke.
 	 * 
 	 * @throws	Kohana_Exception If the cache is unwritable.
 	 * @param	string	The name of the event to invoke.
@@ -126,7 +113,8 @@ class Daemon {
 	 */
 	protected function _execute_event($event)
 	{
-		Event::instance($event)->execute();
+		Event::instance($event)
+			->execute();
 		
 		if ( ! Kohana::cache($this->_cache_name($event), time(), time() * 2))
 		{
