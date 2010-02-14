@@ -79,11 +79,11 @@ class Daemon {
 		
 		foreach ($this->_tasks as $event => $interval)
 		{
-			$last_run = Kohana::cache($this->_cache_name($event));
+			$last_run = Kohana::cache($this->_cache_name($event), NULL, $interval*2);
 			
 			if ($last_run == NULL OR time() > ($last_run + $interval))
 			{
-				$this->_execute_event($event);
+				$this->_execute_event($event, $interval);
 			}
 		}
 	}
@@ -111,12 +111,12 @@ class Daemon {
 	 * @param	string	The name of the event to invoke.
 	 * @return	void
 	 */
-	protected function _execute_event($event)
+	protected function _execute_event($event, $interval)
 	{
 		Event::instance($event)
 			->execute();
 		
-		if ( ! Kohana::cache($this->_cache_name($event), time(), time() * 2))
+		if ( ! Kohana::cache($this->_cache_name($event), time(), $interval * 2))
 		{
 			throw new Kohana_Exception('Unable to write to event cache :event in daemon :daemon.', array(
 				':event'	=> $event,
